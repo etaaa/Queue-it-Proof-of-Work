@@ -1,24 +1,15 @@
-package main
+package lib
 
 import (
 	"crypto/sha256"
+	"encoding/base64"
 	"encoding/hex"
-	"fmt"
+	"encoding/json"
 	"strconv"
 	"strings"
 )
 
-func main() {
-	/* GET THESE VALUES FROM THE RESPONSE WHEN FETCHING
-	THE CHALLENGE AT .../serviceapi/pow/challenge/... */
-	input := "f02b931c-52f0-4507-9406-f1221678dc16"
-	zeroCount := 4
-	// RETURNS THE POSTFIX AND HASH SOLUTION
-	postfix, hash := getHash(input, zeroCount)
-	fmt.Println(postfix, hash)
-}
-
-func getHash(input string, zeroCount int) (int, string) {
+func SolveChallenge(input string, zeroCount int) string {
 	zeros := strings.Repeat("0", zeroCount)
 	for postfix := 0; ; postfix++ {
 		str := input + strconv.Itoa(postfix)
@@ -26,7 +17,21 @@ func getHash(input string, zeroCount int) (int, string) {
 		hash.Write([]byte(str))
 		encodedHash := hex.EncodeToString(hash.Sum(nil))
 		if strings.HasPrefix(encodedHash, zeros) {
-			return postfix, encodedHash
+			solutionList := []solutionType{}
+			solution := solutionType{
+				Hash:    encodedHash,
+				Postfix: postfix,
+			}
+			for i := 0; i < 10; i++ {
+				solutionList = append(solutionList, solution)
+			}
+			solutionData, _ := json.Marshal(solutionList)
+			return base64.StdEncoding.EncodeToString(solutionData)
 		}
 	}
+}
+
+type solutionType struct {
+	Hash    string `json:"hash"`
+	Postfix int    `json:"postfix"`
 }
