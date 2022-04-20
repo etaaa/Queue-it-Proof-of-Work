@@ -12,7 +12,7 @@ Install:
 go get github.com/etaaa/Queue-it-Proof-of-Work
 ```
 Usage:
-```bash
+```go
 package main
 
 import (
