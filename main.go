@@ -9,6 +9,12 @@ import (
 	"strings"
 )
 
+type solutionType struct {
+	Hash    string `json:"hash"`
+	Postfix int    `json:"postfix"`
+}
+
+// Returns the Proof of Work challenge solution
 func SolveChallenge(input string, zeroCount int) string {
 	zeros := strings.Repeat("0", zeroCount)
 	for postfix := 0; ; postfix++ {
@@ -29,9 +35,4 @@ func SolveChallenge(input string, zeroCount int) string {
 			return base64.StdEncoding.EncodeToString(solutionData)
 		}
 	}
-}
-
-type solutionType struct {
-	Hash    string `json:"hash"`
-	Postfix int    `json:"postfix"`
 }
